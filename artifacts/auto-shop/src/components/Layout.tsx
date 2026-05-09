@@ -41,6 +41,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <a href="/#services" className="hover:text-blue-600 transition-colors">서비스</a>
             <a href="/#photos" className="hover:text-blue-600 transition-colors">사진</a>
             <a href="/#location" className="hover:text-blue-600 transition-colors">오시는길</a>
+            <Link href="/reservation" className="hover:text-blue-600 transition-colors font-semibold text-blue-600">예약</Link>
           </div>
 
           <div className="flex items-center gap-3">

@@ -13,12 +13,12 @@ const fadeUp = {
 const stagger = { visible: { transition: { staggerChildren: 0.1 } } };
 
 const PHOTOS = [
-  { url: "https://images.unsplash.com/photo-1617886903355-9354bb57751f?w=800&q=80", caption: "엔진룸 정밀 진단" },
-  { url: "https://images.unsplash.com/photo-1632823471565-1ecdf5c6da2f?w=800&q=80", caption: "서스펜션 및 브레이크 점검" },
-  { url: "https://images.unsplash.com/photo-1580273916550-e323be2ae537?w=800&q=80", caption: "최신 진단 장비 활용" },
-  { url: "https://images.unsplash.com/photo-1504222490345-c075b7b408c8?w=800&q=80", caption: "숙련된 기술진" },
-  { url: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=800&q=80", caption: "고급 합성유 교환" },
-  { url: "https://images.unsplash.com/photo-1636040758814-ed6a8acada34?w=800&q=80", caption: "안전하고 깨끗한 작업 환경" },
+  { url: "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=800&q=80", caption: "엔진룸 정밀 진단" },
+  { url: "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=800&q=80", caption: "서스펜션 및 브레이크 점검" },
+  { url: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80", caption: "최신 진단 장비 활용" },
+  { url: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=800&q=80", caption: "숙련된 기술진" },
+  { url: "https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=800&q=80", caption: "고급 합성유 교환" },
+  { url: "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=800&q=80", caption: "안전하고 깨끗한 작업 환경" },
 ];
 
 const SERVICES = [
