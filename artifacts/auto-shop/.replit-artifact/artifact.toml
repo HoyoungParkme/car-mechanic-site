@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "자동차 정비소 웹사이트"
+version = "1.0.0"
+id = "artifacts/auto-shop"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 18211
+
+[services.development]
+run = "pnpm --filter @workspace/auto-shop run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/auto-shop", "run", "build" ]
+publicDir = "artifacts/auto-shop/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "18211"
+BASE_PATH = "/"
