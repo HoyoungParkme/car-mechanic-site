@@ -29,12 +29,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       {/* Nav */}
       <nav className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 font-extrabold text-xl text-gray-900 hover:text-blue-600 transition-colors">
+          <button
+            onClick={() => setLocation("/")}
+            className="flex items-center gap-2 font-extrabold text-xl text-gray-900 hover:text-blue-600 transition-colors"
+          >
             <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
               <Wrench className="w-4 h-4 text-white" />
             </div>
             <span data-testid="text-logo">드림모터스</span>
-          </Link>
+          </button>
 
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600">
             <Link href="/" className="hover:text-blue-600 transition-colors">홈</Link>
