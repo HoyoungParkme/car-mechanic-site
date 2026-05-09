@@ -1,6 +1,6 @@
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth, clearDemoUser } from "@/hooks/useAuth";
 import { Link, useLocation } from "wouter";
-import { Wrench, User, LogOut, ShieldCheck } from "lucide-react";
+import { Wrench, User, LogOut, ShieldCheck, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,108 +10,123 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { user, isAdmin } = useAuth();
   const [, setLocation] = useLocation();
-  const queryClient = useQueryClient();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-  const handleLogout = async () => {
-    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
-    queryClient.invalidateQueries({ queryKey: ['me'] });
+  const handleLogout = () => {
+    clearDemoUser();
+    fetch('/api/auth/logout', { method: 'POST', credentials: 'include' }).catch(() => {});
     setLocation('/');
+    window.location.reload();
   };
 
   return (
-    <div className="min-h-screen flex flex-col font-sans bg-background text-foreground selection:bg-primary/30">
-      <nav className="sticky top-0 w-full z-50 bg-[#111827] text-white shadow-md">
+    <div className="min-h-screen flex flex-col font-sans bg-white text-gray-900">
+      {/* Nav */}
+      <nav className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-sm">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 font-bold text-xl hover:text-primary transition-colors">
-            <Wrench className="w-6 h-6 text-primary" />
+          <Link href="/" className="flex items-center gap-2 font-extrabold text-xl text-gray-900 hover:text-blue-600 transition-colors">
+            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
+              <Wrench className="w-4 h-4 text-white" />
+            </div>
             <span data-testid="text-logo">드림모터스</span>
           </Link>
-          <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-            <Link href="/" className="hover:text-primary transition-colors">홈</Link>
-            <a href="/#services" className="hover:text-primary transition-colors">서비스</a>
-            <a href="/#photos" className="hover:text-primary transition-colors">사진</a>
-            <a href="/#location" className="hover:text-primary transition-colors">오시는길</a>
+
+          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600">
+            <Link href="/" className="hover:text-blue-600 transition-colors">홈</Link>
+            <a href="/#services" className="hover:text-blue-600 transition-colors">서비스</a>
+            <a href="/#photos" className="hover:text-blue-600 transition-colors">사진</a>
+            <a href="/#location" className="hover:text-blue-600 transition-colors">오시는길</a>
           </div>
-          <div className="flex items-center gap-4">
+
+          <div className="flex items-center gap-3">
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-10 w-10 rounded-full border-border/20 bg-muted/10 hover:bg-muted/20">
-                    <User className="h-5 w-5 text-white" />
+                  <Button variant="ghost" size="sm" className="flex items-center gap-2 rounded-full px-3">
+                    <div className="w-7 h-7 rounded-full bg-blue-100 flex items-center justify-center">
+                      <User className="w-4 h-4 text-blue-600" />
+                    </div>
+                    <span className="text-sm font-medium hidden sm:block">{user.name}</span>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end" forceMount>
-                  <DropdownMenuLabel className="font-normal">
-                    <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">{user.name || '고객님'}</p>
-                      <p className="text-xs leading-none text-muted-foreground">
-                        {user.email}
-                      </p>
-                    </div>
+                <DropdownMenuContent align="end" className="w-52">
+                  <DropdownMenuLabel>
+                    <p className="text-sm font-medium">{user.name}</p>
+                    <p className="text-xs text-gray-400">{user.email}</p>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   {isAdmin && (
-                    <>
-                      <DropdownMenuItem asChild>
-                        <Link href="/admin" className="cursor-pointer w-full flex items-center">
-                          <ShieldCheck className="mr-2 h-4 w-4" />
-                          관리자
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                    </>
+                    <DropdownMenuItem asChild>
+                      <Link href="/admin" className="cursor-pointer flex items-center">
+                        <ShieldCheck className="mr-2 h-4 w-4 text-blue-600" />관리자 패널
+                      </Link>
+                    </DropdownMenuItem>
                   )}
-                  <DropdownMenuItem onClick={handleLogout} className="text-destructive cursor-pointer focus:text-destructive">
-                    <LogOut className="mr-2 h-4 w-4" />
-                    로그아웃
+                  <DropdownMenuItem onClick={handleLogout} className="text-red-500 cursor-pointer focus:text-red-500">
+                    <LogOut className="mr-2 h-4 w-4" />로그아웃
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Button asChild variant="outline" className="hidden md:flex border-border/20 bg-transparent text-white hover:bg-white/10 hover:text-white">
+              <Button asChild variant="ghost" size="sm" className="hidden md:flex text-gray-600">
                 <Link href="/login" data-testid="link-nav-login">로그인</Link>
               </Button>
             )}
-            <Button asChild size="sm" className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
+            <Button asChild size="sm" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-sm">
               <Link href="/reservation" data-testid="button-nav-reserve">예약하기</Link>
             </Button>
+            <button className="md:hidden p-2" onClick={() => setMobileOpen(!mobileOpen)}>
+              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
           </div>
         </div>
+        {mobileOpen && (
+          <div className="md:hidden border-t border-gray-100 bg-white px-4 py-4 flex flex-col gap-3 text-sm font-medium text-gray-600">
+            <Link href="/" onClick={() => setMobileOpen(false)} className="py-2">홈</Link>
+            <a href="/#services" onClick={() => setMobileOpen(false)} className="py-2">서비스</a>
+            <a href="/#photos" onClick={() => setMobileOpen(false)} className="py-2">사진</a>
+            <a href="/#location" onClick={() => setMobileOpen(false)} className="py-2">오시는길</a>
+            {!user && <Link href="/login" onClick={() => setMobileOpen(false)} className="py-2 text-blue-600 font-semibold">로그인</Link>}
+          </div>
+        )}
       </nav>
 
-      <main className="flex-1 flex flex-col">
-        {children}
-      </main>
+      <main className="flex-1 flex flex-col">{children}</main>
 
-      <footer className="bg-[#111827] text-white py-16 mt-auto">
+      <footer className="bg-gray-900 text-white pt-14 pb-8">
         <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-8 border-b border-white/10 pb-8 mb-8">
-            <div className="flex items-center gap-2 text-2xl font-bold">
-              <Wrench className="w-8 h-8 text-primary" />
-              <span>드림모터스</span>
+          <div className="grid md:grid-cols-3 gap-10 pb-10 border-b border-white/10">
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-xl font-extrabold">
+                <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
+                  <Wrench className="w-4 h-4 text-white" />
+                </div>
+                드림모터스
+              </div>
+              <p className="text-gray-400 text-sm leading-relaxed">
+                타협하지 않는 품질과 정직한 진단.<br />고객님의 안전한 주행을 책임집니다.
+              </p>
             </div>
-            <div className="flex gap-6 text-sm font-medium text-white/70">
-              <Link href="/" className="hover:text-primary transition-colors">홈</Link>
-              <Link href="/reservation" className="hover:text-primary transition-colors">예약하기</Link>
-              {isAdmin && <Link href="/admin" className="hover:text-primary transition-colors">관리자</Link>}
+            <div className="space-y-2 text-sm">
+              <h4 className="font-semibold text-gray-300 mb-3">바로가기</h4>
+              <Link href="/" className="block text-gray-400 hover:text-white transition-colors">홈</Link>
+              <Link href="/reservation" className="block text-gray-400 hover:text-white transition-colors">예약하기</Link>
+              {isAdmin && <Link href="/admin" className="block text-gray-400 hover:text-white transition-colors">관리자</Link>}
             </div>
-          </div>
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 text-sm text-white/60">
-            <div className="space-y-2 text-center md:text-left">
-              <p>충청북도 진천군 진천읍 문화로 200-8 드림모터스</p>
-              <p>대표전화: 010-1234-5678</p>
-            </div>
-            <div className="text-center md:text-right space-y-2">
-              <p>평일 09:00 - 19:00 | 토요일 09:00 - 17:00</p>
+            <div className="space-y-2 text-sm text-gray-400">
+              <h4 className="font-semibold text-gray-300 mb-3">연락처</h4>
+              <p>충청북도 진천군 진천읍 문화로 200-8</p>
+              <p className="text-white font-bold text-base">010-1234-5678</p>
+              <p>평일 09:00–19:00 | 토요일 09:00–17:00</p>
               <p>일요일 및 공휴일 휴무</p>
-              <p className="opacity-50 mt-4">© {new Date().getFullYear()} Dream Motors. All rights reserved.</p>
             </div>
           </div>
+          <p className="text-center text-gray-500 text-xs mt-8">© {new Date().getFullYear()} Dream Motors. All rights reserved.</p>
         </div>
       </footer>
     </div>
