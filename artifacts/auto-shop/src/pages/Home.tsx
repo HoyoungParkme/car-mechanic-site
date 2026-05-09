@@ -50,10 +50,10 @@ export default function Home() {
     <div className="flex flex-col bg-white text-gray-900 font-sans">
 
       {/* ── Hero ── */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 py-28 md:py-36">
-        <div className="absolute inset-0 opacity-10"
-          style={{ backgroundImage: "url(https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?w=1600&q=60)", backgroundSize: "cover", backgroundPosition: "center" }} />
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-700/80 to-indigo-900/90" />
+      <section className="relative overflow-hidden bg-[#111111] py-28 md:py-36">
+        <div className="absolute inset-0 opacity-30"
+          style={{ backgroundImage: "url(https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1600&q=60)", backgroundSize: "cover", backgroundPosition: "center" }} />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-zinc-900/80 to-[#111111]" />
         <div className="container mx-auto px-4 relative z-10 text-center">
           <motion.div initial="hidden" animate="visible" variants={stagger} className="max-w-3xl mx-auto space-y-7">
             <motion.div variants={fadeUp}>
@@ -225,7 +225,7 @@ export default function Home() {
       </section>
 
       {/* ── CTA ── */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-indigo-700">
+      <section className="py-20 bg-gradient-to-r from-zinc-900 to-gray-900">
         <div className="container mx-auto px-4 text-center">
           <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={stagger} className="max-w-2xl mx-auto space-y-6">
             <motion.h2 variants={fadeUp} className="text-3xl md:text-4xl font-extrabold text-white">지금 바로 예약하세요</motion.h2>
