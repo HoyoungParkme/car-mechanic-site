@@ -73,7 +73,7 @@ export default function Home() {
                 <Link href="/reservation">예약하기 <ArrowRight className="ml-2 w-4 h-4" /></Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="h-13 px-8 border-white/40 text-white hover:bg-white/10 font-semibold text-base backdrop-blur-sm" data-testid="button-hero-call">
-                <a href="tel:010-1234-5678"><Phone className="mr-2 w-4 h-4" />010-1234-5678</a>
+                <a href="tel:010-3090-6998"><Phone className="mr-2 w-4 h-4" />010-3090-6998</a>
               </Button>
             </motion.div>
           </motion.div>
@@ -187,7 +187,7 @@ export default function Home() {
               {[
                 { icon: MapPin, title: "주소", content: "충청북도 진천군 진천읍 문화로 200-8\n드림모터스" },
                 { icon: Clock,  title: "영업시간", content: "평일: 09:00 – 19:00\n토요일: 09:00 – 17:00\n일요일 및 공휴일: 휴무" },
-                { icon: Phone,  title: "전화", content: "010-1234-5678" },
+                { icon: Phone,  title: "전화", content: "010-3090-6998" },
               ].map(({ icon: Icon, title, content }) => (
                 <motion.div key={title} variants={fadeUp} className="flex gap-4 p-5 bg-slate-50 rounded-2xl border border-slate-100">
                   <div className="w-11 h-11 rounded-xl bg-blue-100 flex items-center justify-center shrink-0">
@@ -235,7 +235,7 @@ export default function Home() {
                 <Link href="/reservation">예약하기</Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="h-13 px-8 border-white/40 text-white hover:bg-white/10 font-semibold backdrop-blur-sm">
-                <a href="tel:010-1234-5678"><Phone className="mr-2 w-4 h-4" />전화 상담</a>
+                <a href="tel:010-3090-6998"><Phone className="mr-2 w-4 h-4" />전화 상담</a>
               </Button>
             </motion.div>
           </motion.div>

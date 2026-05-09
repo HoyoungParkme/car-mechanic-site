@@ -88,7 +88,7 @@ export default function Reservation() {
                 {[
                   { icon: MapPin, title: "주소", content: "충청북도 진천군 진천읍\n문화로 200-8 드림모터스" },
                   { icon: Clock, title: "영업시간", content: "평일 09:00–19:00\n토요일 09:00–17:00\n일요일 및 공휴일 휴무" },
-                  { icon: Phone, title: "전화", content: "010-1234-5678" },
+                  { icon: Phone, title: "전화", content: "010-3090-6998" },
                 ].map(({ icon: Icon, title, content }) => (
                   <div key={title} className="flex gap-4">
                     <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">

@@ -122,7 +122,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div className="space-y-2 text-sm text-gray-400">
               <h4 className="font-semibold text-gray-300 mb-3">연락처</h4>
               <p>충청북도 진천군 진천읍 문화로 200-8</p>
-              <p className="text-white font-bold text-base">010-1234-5678</p>
+              <p className="text-white font-bold text-base">010-3090-6998</p>
               <p>평일 09:00–19:00 | 토요일 09:00–17:00</p>
               <p>일요일 및 공휴일 휴무</p>
             </div>

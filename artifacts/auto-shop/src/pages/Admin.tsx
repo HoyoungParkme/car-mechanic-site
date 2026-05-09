@@ -34,7 +34,7 @@ const DEMO_EXPERTISE = [
   { id: 5, title: "오일 & 소모품", description: "엔진오일, 미션오일, 냉각수 등 모든 소모품 교환", icon_name: "Droplets" },
   { id: 6, title: "전기 / 전장 시스템", description: "배터리 교환, ECU 점검, 전기 배선 수리 전문", icon_name: "Zap" },
 ];
-const DEMO_SHOP_INFO = { address: "충청북도 진천군 진천읍 문화로 200-8", phone: "010-1234-5678", weekday_hours: "09:00 - 19:00", saturday_hours: "09:00 - 17:00", directions: "진천 나들목에서 5분, 진천 문화체육센터 맞은편" };
+const DEMO_SHOP_INFO = { address: "충청북도 진천군 진천읍 문화로 200-8", phone: "010-3090-6998", weekday_hours: "09:00 - 19:00", saturday_hours: "09:00 - 17:00", directions: "진천 나들목에서 5분, 진천 문화체육센터 맞은편" };
 
 const STATUS_MAP: Record<string, { label: string; cls: string }> = {
   pending:   { label: "대기중", cls: "bg-amber-100 text-amber-700 border-amber-200" },
