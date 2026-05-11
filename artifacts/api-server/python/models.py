@@ -13,7 +13,22 @@ class User(Base):
     name = Column(String(255), nullable=False)
     profile_image = Column(Text, nullable=True)
     is_admin = Column(Boolean, default=False)
+    username = Column(String(50), nullable=True, unique=True)
+    password_hash = Column(String(255), nullable=True)
+    phone = Column(String(20), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class PhoneOTP(Base):
+    __tablename__ = "phone_otps"
+
+    id = Column(Integer, primary_key=True, index=True)
+    phone = Column(String(20), nullable=False, index=True)
+    otp_code = Column(String(6), nullable=False)
+    is_verified = Column(Boolean, default=False)
+    is_used = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    expires_at = Column(DateTime, nullable=False)
 
 
 class Reservation(Base):

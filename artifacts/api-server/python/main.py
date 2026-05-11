@@ -1,62 +1,45 @@
 import os
 from contextlib import asynccontextmanager
-from datetime import date as date_type
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy import text
 
-from database import engine, SessionLocal
-from models import Base, Reservation, User
+from database import engine
+from models import Base
 from routers import auth, reservations, photos, expertise, shop_info, storage
 
 
 def run_migrations():
-    """Add new columns to existing tables without dropping data."""
-    new_columns = [
+    new_cols = [
         "ALTER TABLE reservations ADD COLUMN IF NOT EXISTS rejection_reason TEXT",
         "ALTER TABLE reservations ADD COLUMN IF NOT EXISTS is_completed BOOLEAN DEFAULT FALSE",
         "ALTER TABLE reservations ADD COLUMN IF NOT EXISTS is_paid BOOLEAN DEFAULT FALSE",
         "ALTER TABLE reservations ADD COLUMN IF NOT EXISTS kakao_notified BOOLEAN DEFAULT FALSE",
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS username VARCHAR(50)",
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS password_hash VARCHAR(255)",
+        "ALTER TABLE users ADD COLUMN IF NOT EXISTS phone VARCHAR(20)",
     ]
     with engine.connect() as conn:
-        for stmt in new_columns:
+        for stmt in new_cols:
             try:
                 conn.execute(text(stmt))
             except Exception:
                 pass
+        # unique index on username (ignore if exists)
+        try:
+            conn.execute(text(
+                "CREATE UNIQUE INDEX IF NOT EXISTS ix_users_username ON users (username) WHERE username IS NOT NULL"
+            ))
+        except Exception:
+            pass
         conn.commit()
-
-
-def seed_demo_reservations():
-    """Seed demo reservations if none exist."""
-    db = SessionLocal()
-    try:
-        if db.query(Reservation).count() > 0:
-            return
-        admin = db.query(User).filter(User.oauth_provider == "local", User.oauth_id == "admin").first()
-        if not admin:
-            return
-        demos = [
-            Reservation(user_id=admin.id, date=date_type(2026, 5, 19), time_slot="10:00", service_type="엔진오일 교환", vehicle_model="쏘나타 DN8", vehicle_number="12가 3456", notes="주행 거리 15만km, 합성유 요청", status="pending"),
-            Reservation(user_id=admin.id, date=date_type(2026, 5, 19), time_slot="10:00", service_type="브레이크 점검", vehicle_model="아반떼 CN7", vehicle_number="78나 9012", notes="제동 시 소음 발생", status="pending"),
-            Reservation(user_id=admin.id, date=date_type(2026, 5, 20), time_slot="14:00", service_type="타이어 교환", vehicle_model="그랜저 IG", vehicle_number="34다 5678", notes="4본 교환 희망", status="confirmed"),
-            Reservation(user_id=admin.id, date=date_type(2026, 5, 21), time_slot="11:00", service_type="배터리 교체", vehicle_model="K5 3세대", vehicle_number="56라 7890", notes=None, status="confirmed", is_completed=True, is_paid=True, kakao_notified=True),
-            Reservation(user_id=admin.id, date=date_type(2026, 5, 22), time_slot="09:00", service_type="종합 정밀진단", vehicle_model="팰리세이드", vehicle_number="90마 1234", notes="구매 전 점검", status="rejected", rejection_reason="해당 일정 이미 만차"),
-            Reservation(user_id=admin.id, date=date_type(2026, 5, 23), time_slot="15:00", service_type="에어컨 점검", vehicle_model="카니발 KA4", vehicle_number="11바 2233", notes=None, status="confirmed", is_completed=True, is_paid=False, kakao_notified=True),
-        ]
-        for d in demos:
-            db.add(d)
-        db.commit()
-    finally:
-        db.close()
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
     run_migrations()
-    seed_demo_reservations()
     yield
 
 
@@ -67,8 +50,7 @@ origins = ["http://localhost", "http://localhost:80"]
 if REPLIT_DOMAINS:
     for domain in REPLIT_DOMAINS.split(","):
         domain = domain.strip()
-        origins.append(f"https://{domain}")
-        origins.append(f"http://{domain}")
+        origins += [f"https://{domain}", f"http://{domain}"]
 
 app.add_middleware(
     CORSMiddleware,

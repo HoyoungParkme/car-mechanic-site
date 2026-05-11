@@ -9,9 +9,32 @@ class UserOut(BaseModel):
     name: str
     profile_image: Optional[str]
     is_admin: bool
+    username: Optional[str] = None
+    phone: Optional[str] = None
     created_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+class LocalLoginRequest(BaseModel):
+    username: str
+    password: str
+
+
+class PhoneSendRequest(BaseModel):
+    phone: str
+
+
+class PhoneVerifyRequest(BaseModel):
+    phone: str
+    otp_code: str
+
+
+class RegisterRequest(BaseModel):
+    name: str
+    username: str
+    password: str
+    phone: str
 
 
 class ReservationCreate(BaseModel):
