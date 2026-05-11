@@ -1,37 +1,23 @@
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
-export interface DemoUser {
+export interface AuthUser {
   id: number;
   name: string;
-  email: string;
-  profile_image: null;
+  email: string | null;
+  profile_image: string | null;
   is_admin: boolean;
 }
 
-const STORAGE_KEY = 'dream_motors_demo_user';
-
-export function getDemoUser(): DemoUser | null {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-}
-
-export function setDemoUser(user: DemoUser) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
-}
-
-export function clearDemoUser() {
-  localStorage.removeItem(STORAGE_KEY);
-}
-
 export function useAuth() {
-  const user = getDemoUser();
-  return {
-    user,
-    isLoading: false,
-    isAdmin: user?.is_admin ?? false,
-  };
+  const { data: user = null, isLoading } = useQuery<AuthUser | null>({
+    queryKey: ['me'],
+    queryFn: async () => {
+      const res = await fetch('/api/auth/me', { credentials: 'include' });
+      if (!res.ok) return null;
+      return res.json();
+    },
+    retry: false,
+    staleTime: 1000 * 60 * 5,
+  });
+  return { user, isLoading, isAdmin: user?.is_admin ?? false };
 }

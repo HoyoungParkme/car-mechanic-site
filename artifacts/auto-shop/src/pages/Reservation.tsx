@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useLocation } from "wouter";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -7,47 +8,58 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent } from "@/components/ui/card";
 import { MapPin, Phone, Clock, CalendarCheck, CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
-import { getDemoUser } from "@/hooks/useAuth";
 
-const SERVICES = [
-  "엔진오일 교환", "타이어 교환", "브레이크 점검",
-  "배터리 교체", "에어컨 점검", "종합 정밀진단", "기타",
-];
+const SERVICES = ["엔진오일 교환", "타이어 교환", "브레이크 점검", "배터리 교체", "에어컨 점검", "종합 정밀진단", "기타"];
 const TIME_SLOTS = ["09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00", "17:00"];
 
 export default function Reservation() {
   const [, setLocation] = useLocation();
+  const { user, isLoading } = useAuth();
   const [form, setForm] = useState({ name: "", phone: "", date: "", time: "", serviceType: "", vehicleModel: "", vehicleNumber: "", notes: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
-
   const handleSelect = (name: string, value: string) =>
     setForm(prev => ({ ...prev, [name]: value }));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    const user = getDemoUser();
-    if (user) {
-      await new Promise(r => setTimeout(r, 1000));
-      setIsSuccess(true);
-      setIsSubmitting(false);
+    setError(null);
+
+    if (!user) {
+      setLocation("/login");
       return;
     }
+
+    setIsSubmitting(true);
     try {
-      const res = await fetch('/api/reservations', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ date: form.date, time_slot: form.time, service_type: form.serviceType, vehicle_model: form.vehicleModel, vehicle_number: form.vehicleNumber, notes: form.notes }),
+      const res = await fetch("/api/reservations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          date: form.date,
+          time_slot: form.time,
+          service_type: form.serviceType,
+          vehicle_model: form.vehicleModel,
+          vehicle_number: form.vehicleNumber,
+          notes: form.notes,
+        }),
       });
-      if (res.status === 401) { setLocation('/login'); return; }
-      if (res.ok) setIsSuccess(true);
-    } catch { /* ignore */ } finally { setIsSubmitting(false); }
+      if (res.status === 401) { setLocation("/login"); return; }
+      if (!res.ok) throw new Error("예약 접수 중 오류가 발생했습니다.");
+      setIsSuccess(true);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "예약 실패");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+  if (isLoading) return <div className="flex-1 flex items-center justify-center"><div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" /></div>;
 
   if (isSuccess) return (
     <div className="flex-1 flex items-center justify-center bg-slate-50 py-20 px-4">
@@ -59,7 +71,7 @@ export default function Reservation() {
             </div>
             <h2 className="text-2xl font-bold">예약이 접수되었습니다</h2>
             <p className="text-gray-500">확인 후 기재하신 연락처로 안내 문자를 드립니다.</p>
-            <div className="w-full mt-2 p-4 bg-slate-50 rounded-xl text-left text-sm space-y-1">
+            <div className="w-full p-4 bg-slate-50 rounded-xl text-left text-sm space-y-1">
               <p><span className="text-gray-400">정비 항목:</span> <span className="font-medium">{form.serviceType}</span></p>
               <p><span className="text-gray-400">예약 일시:</span> <span className="font-medium">{form.date} {form.time}</span></p>
               <p><span className="text-gray-400">차량:</span> <span className="font-medium">{form.vehicleModel} {form.vehicleNumber}</span></p>
@@ -82,6 +94,11 @@ export default function Reservation() {
             <div>
               <h1 className="text-4xl font-extrabold tracking-tight text-gray-900">정비 예약</h1>
               <p className="mt-2 text-gray-500 text-lg">전문 기술진이 꼼꼼하게 진단해 드립니다.</p>
+              {!user && (
+                <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-700 font-medium">
+                  예약 신청은 로그인 후 이용하실 수 있습니다.
+                </div>
+              )}
             </div>
             <Card className="border-0 shadow-md ring-1 ring-slate-100 bg-white">
               <CardContent className="p-6 space-y-5">
@@ -126,20 +143,16 @@ export default function Reservation() {
                     </div>
                     <div className="space-y-1.5">
                       <label className="text-sm font-semibold text-gray-700">예약 시간</label>
-                      <Select required onValueChange={v => handleSelect('time', v)} value={form.time}>
-                        <SelectTrigger className="h-11 bg-slate-50 border-slate-200" data-testid="select-time">
-                          <SelectValue placeholder="시간 선택" />
-                        </SelectTrigger>
+                      <Select required onValueChange={v => handleSelect("time", v)} value={form.time}>
+                        <SelectTrigger className="h-11 bg-slate-50 border-slate-200" data-testid="select-time"><SelectValue placeholder="시간 선택" /></SelectTrigger>
                         <SelectContent>{TIME_SLOTS.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
                       </Select>
                     </div>
                   </div>
                   <div className="space-y-1.5">
                     <label className="text-sm font-semibold text-gray-700">정비 항목</label>
-                    <Select required onValueChange={v => handleSelect('serviceType', v)} value={form.serviceType}>
-                      <SelectTrigger className="h-11 bg-slate-50 border-slate-200" data-testid="select-service">
-                        <SelectValue placeholder="어떤 정비가 필요하신가요?" />
-                      </SelectTrigger>
+                    <Select required onValueChange={v => handleSelect("serviceType", v)} value={form.serviceType}>
+                      <SelectTrigger className="h-11 bg-slate-50 border-slate-200" data-testid="select-service"><SelectValue placeholder="어떤 정비가 필요하신가요?" /></SelectTrigger>
                       <SelectContent>{SERVICES.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
                     </Select>
                   </div>
@@ -157,8 +170,9 @@ export default function Reservation() {
                     <label className="text-sm font-semibold text-gray-700">요청 사항</label>
                     <Textarea name="notes" placeholder="이상 증상이나 특별히 점검이 필요한 부분을 적어주세요." className="min-h-[100px] resize-none bg-slate-50 border-slate-200" value={form.notes} onChange={handleChange} />
                   </div>
+                  {error && <p className="text-sm text-red-500 font-medium">{error}</p>}
                   <Button type="submit" size="lg" className="w-full h-13 text-base font-bold bg-blue-600 hover:bg-blue-700" disabled={isSubmitting} data-testid="button-submit-reservation">
-                    {isSubmitting ? "처리 중..." : <><CalendarCheck className="mr-2 w-5 h-5" />예약 신청하기</>}
+                    {isSubmitting ? "처리 중..." : <><CalendarCheck className="mr-2 w-5 h-5" />{user ? "예약 신청하기" : "로그인하고 예약하기"}</>}
                   </Button>
                 </form>
               </CardContent>

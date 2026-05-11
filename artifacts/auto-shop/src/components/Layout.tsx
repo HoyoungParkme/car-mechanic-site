@@ -1,4 +1,4 @@
-import { useAuth, clearDemoUser } from "@/hooks/useAuth";
+import { useAuth } from "@/hooks/useAuth";
 import { Link, useLocation } from "wouter";
 import { Wrench, User, LogOut, ShieldCheck, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -17,11 +17,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const [, setLocation] = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const handleLogout = () => {
-    clearDemoUser();
-    fetch('/api/auth/logout', { method: 'POST', credentials: 'include' }).catch(() => {});
-    setLocation('/');
-    window.location.reload();
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' }).catch(() => {});
+    window.location.href = '/';
   };
 
   return (
