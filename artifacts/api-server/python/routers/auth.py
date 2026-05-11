@@ -177,8 +177,23 @@ class AdminLoginRequest(BaseModel):
 def admin_login(body: AdminLoginRequest, response: Response, db: Session = Depends(get_db)):
     if body.username != ADMIN_USERNAME or body.password != ADMIN_PASSWORD:
         raise HTTPException(status_code=401, detail="아이디 또는 비밀번호가 틀렸습니다.")
-    user = get_or_create_user(db, "local", "admin", "admin@dreammotors.kr", "관리자", is_admin=True)
-    set_auth_cookie(response, create_access_token(user.id))
+    from models import Reservation
+    from datetime import date as date_type
+    admin_user = get_or_create_user(db, "local", "admin", "admin@dreammotors.kr", "관리자", is_admin=True)
+    # Seed demo reservations on first admin login
+    if db.query(Reservation).count() == 0:
+        demos = [
+            Reservation(user_id=admin_user.id, date=date_type(2026, 5, 19), time_slot="10:00", service_type="엔진오일 교환", vehicle_model="쏘나타 DN8", vehicle_number="12가 3456", notes="주행 거리 15만km, 합성유 요청", status="pending"),
+            Reservation(user_id=admin_user.id, date=date_type(2026, 5, 19), time_slot="10:00", service_type="브레이크 점검", vehicle_model="아반떼 CN7", vehicle_number="78나 9012", notes="제동 시 소음 발생", status="pending"),
+            Reservation(user_id=admin_user.id, date=date_type(2026, 5, 20), time_slot="14:00", service_type="타이어 교환", vehicle_model="그랜저 IG", vehicle_number="34다 5678", notes="4본 교환 희망", status="confirmed"),
+            Reservation(user_id=admin_user.id, date=date_type(2026, 5, 21), time_slot="11:00", service_type="배터리 교체", vehicle_model="K5 3세대", vehicle_number="56라 7890", notes=None, status="confirmed", is_completed=True, is_paid=True, kakao_notified=True),
+            Reservation(user_id=admin_user.id, date=date_type(2026, 5, 22), time_slot="09:00", service_type="종합 정밀진단", vehicle_model="팰리세이드", vehicle_number="90마 1234", notes="구매 전 점검", status="rejected", rejection_reason="해당 일정 이미 만차"),
+            Reservation(user_id=admin_user.id, date=date_type(2026, 5, 23), time_slot="15:00", service_type="에어컨 점검", vehicle_model="카니발 KA4", vehicle_number="11바 2233", notes=None, status="confirmed", is_completed=True, is_paid=False, kakao_notified=True),
+        ]
+        for d in demos:
+            db.add(d)
+        db.commit()
+    set_auth_cookie(response, create_access_token(admin_user.id))
     return {"ok": True}
 
 

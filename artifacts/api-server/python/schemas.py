@@ -31,6 +31,10 @@ class ReservationUpdate(BaseModel):
     vehicle_model: Optional[str] = None
     vehicle_number: Optional[str] = None
     notes: Optional[str] = None
+    rejection_reason: Optional[str] = None
+    is_completed: Optional[bool] = None
+    is_paid: Optional[bool] = None
+    kakao_notified: Optional[bool] = None
 
 
 class ReservationOut(BaseModel):
@@ -43,6 +47,10 @@ class ReservationOut(BaseModel):
     vehicle_number: Optional[str]
     notes: Optional[str]
     status: str
+    rejection_reason: Optional[str] = None
+    is_completed: bool = False
+    is_paid: bool = False
+    kakao_notified: bool = False
     created_at: datetime
     user_name: Optional[str] = None
     user_email: Optional[str] = None

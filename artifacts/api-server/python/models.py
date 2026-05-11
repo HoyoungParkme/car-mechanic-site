@@ -28,6 +28,10 @@ class Reservation(Base):
     vehicle_number = Column(String(50), nullable=True)
     notes = Column(Text, nullable=True)
     status = Column(String(20), default="pending")
+    rejection_reason = Column(Text, nullable=True)
+    is_completed = Column(Boolean, default=False)
+    is_paid = Column(Boolean, default=False)
+    kakao_notified = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
 
