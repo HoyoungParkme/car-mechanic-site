@@ -4,6 +4,10 @@
  * 점주가 직접 수정하는 곳. 이 파일만 고치면 사이트 전체에 반영된다.
  * (Sprint 7 / REQ-04 시나리오 X — 백엔드 없는 정적 사이트)
  */
+
+// public/ 자산 URL — Vite의 BASE_URL(/car-mechanic-site/ 또는 /)을 자동으로 prefix한다.
+export const LOGO_URL = `${import.meta.env.BASE_URL}logo.png`;
+
 import {
   Battery,
   CircleDot,

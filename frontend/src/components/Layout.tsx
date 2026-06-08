@@ -2,7 +2,7 @@ import { Link, useLocation } from "wouter";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { SHOP } from "@/data/shop";
+import { SHOP, LOGO_URL } from "@/data/shop";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [, setLocation] = useLocation();
@@ -19,7 +19,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             aria-label={SHOP.name}
             data-testid="logo-button"
           >
-            <img src="/logo.png" alt={SHOP.name} className="h-12 w-auto object-contain" />
+            <img src={LOGO_URL} alt={SHOP.name} className="h-12 w-auto object-contain" />
           </button>
 
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600">
@@ -57,7 +57,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <div className="grid md:grid-cols-3 gap-10 pb-10 border-b border-white/10">
             <div className="space-y-3">
               <div className="bg-white rounded-xl p-3 inline-block">
-                <img src="/logo.png" alt={SHOP.name} className="h-16 w-auto object-contain" />
+                <img src={LOGO_URL} alt={SHOP.name} className="h-16 w-auto object-contain" />
               </div>
               <p className="text-gray-400 text-sm leading-relaxed">
                 타협하지 않는 품질과 정직한 진단.<br />고객님의 안전한 주행을 책임집니다.
