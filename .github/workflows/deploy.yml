@@ -1,0 +1,62 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build (Vite)
+        env:
+          # GitHub Pages는 https://<user>.github.io/<repo>/ 경로이므로 base path 지정.
+          # 추후 커스텀 도메인 연결 시 BASE_PATH=/ 로 바꾸면 됨.
+          BASE_PATH: /car-mechanic-site/
+        run: npm run build
+
+      - name: SPA fallback (404.html ← index.html)
+        # GitHub Pages는 정적이라 /reservation 직접 접근 시 404를 반환한다.
+        # 404.html을 index.html과 동일하게 두면 클라이언트 라우터(wouter)가 처리한다.
+        run: cp dist/public/index.html dist/public/404.html
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: frontend/dist/public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
