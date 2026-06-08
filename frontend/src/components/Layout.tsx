@@ -7,6 +7,9 @@ import { SHOP, LOGO_URL } from "@/data/shop";
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [, setLocation] = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+  // GitHub Pages 서브경로 대응: BASE_URL을 anchor link 앞에 붙여 홈으로 정확히 이동.
+  // dev/도메인 연결 시 BASE_URL='/'이므로 자연스럽게 '/#services' 형태로 동작.
+  const HOME_BASE = import.meta.env.BASE_URL;
 
   return (
     <div className="min-h-screen flex flex-col font-sans bg-white text-gray-900">
@@ -24,9 +27,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600">
             <Link href="/" className="hover:text-blue-600 transition-colors">홈</Link>
-            <a href="/#services" className="hover:text-blue-600 transition-colors">서비스</a>
-            <a href="/#photos" className="hover:text-blue-600 transition-colors">사진</a>
-            <a href="/#location" className="hover:text-blue-600 transition-colors">오시는길</a>
+            <a href={`${HOME_BASE}#services`} className="hover:text-blue-600 transition-colors">서비스</a>
+            <a href={`${HOME_BASE}#photos`} className="hover:text-blue-600 transition-colors">사진</a>
+            <a href={`${HOME_BASE}#location`} className="hover:text-blue-600 transition-colors">오시는길</a>
             <Link href="/reservation" className="hover:text-blue-600 transition-colors font-semibold text-blue-600">예약 안내</Link>
           </div>
 
@@ -42,9 +45,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         {mobileOpen && (
           <div className="md:hidden border-t border-gray-100 bg-white px-4 py-4 flex flex-col gap-3 text-sm font-medium text-gray-600">
             <Link href="/" onClick={() => setMobileOpen(false)} className="py-2">홈</Link>
-            <a href="/#services" onClick={() => setMobileOpen(false)} className="py-2">서비스</a>
-            <a href="/#photos" onClick={() => setMobileOpen(false)} className="py-2">사진</a>
-            <a href="/#location" onClick={() => setMobileOpen(false)} className="py-2">오시는길</a>
+            <a href={`${HOME_BASE}#services`} onClick={() => setMobileOpen(false)} className="py-2">서비스</a>
+            <a href={`${HOME_BASE}#photos`} onClick={() => setMobileOpen(false)} className="py-2">사진</a>
+            <a href={`${HOME_BASE}#location`} onClick={() => setMobileOpen(false)} className="py-2">오시는길</a>
             <Link href="/reservation" onClick={() => setMobileOpen(false)} className="py-2 text-blue-600 font-semibold">예약 안내</Link>
           </div>
         )}
